@@ -28,7 +28,7 @@ def get_summary(path1):
 
     total_mb = total / (1024 * 1024)
 
-    print(f"Total number of file is {file_num}\nTotal size of directory is {total_mb:.4f}MB\n ")
+    print(f"Total number of file is {file_num}\nTotal size of directory is {total_mb:.4f}MB")
 
     sorted_files = sorted(list_dir.items(), key = lambda x:x[1], reverse=True)
 
