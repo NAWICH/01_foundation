@@ -6,7 +6,7 @@
 import os
 import shutil
 storage = {
-    "Images": [".jpg", ".png", 'jpeg', 'gif'],
+    "Images": [".jpg", ".png", '.jpeg', '.gif'],
     "Docs": [".pdf", '.docx', '.txt', '.xlsx'],
     "Archives": ['.zip', '.tar.gz', '.rar'],
     'Scripts': ['.py', '.sh', '.cpp', '.c', '.js']
