@@ -1,0 +1,13 @@
+{
+    "latitude": {"pokhara": 28.2669,
+                 "kathmandu": 27.7017,
+                 "baglung": 28.2128,
+                 "lalitpur": 28.2669},
+    "longitude": {"pokhara": 83.9685,
+                 "kathmandu": 85.3206,
+                 "baglung": 83.6663,
+                 "lalitpur": 83.9685},
+    "current": ["temperature_2m", "relative_humidity_2m","is_day", "rain", "showers", "snowfall", "wind_speed_10m", "wind_direction_10m"],
+    "timezone": "auto",
+    "wind_speed_unit": "ms"
+}

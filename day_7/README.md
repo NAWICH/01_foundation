@@ -13,7 +13,13 @@ The system is built on a 4-layer architectural model:
 
 ## 🛠️ Skills Demonstrated
 * **Filesystem Automation:** Professional use of `os.makedirs(exist_ok=True)` and `os.path.join` for cross-platform compatibility.
-* **Data Transformation:** Converting raw JSON lists into enriched dictionary objects with metadata.
+* **Data Transformation:** Conver
+       // Input size of first matrix
+       printf("Enter rows and columns of first matrix: ");
+        scanf("%d %d", &r1, &c1);
+
+        // Input size of second matrix
+        pting raw JSON lists into enriched dictionary objects with metadata.
 * **Date Manipulation:** Using Python's `datetime` objects to drive automated archival logic.
 * **Security Best Practices:** Implementing a "Gatekeeper" logic to simulate `.env` permission checks.
 
