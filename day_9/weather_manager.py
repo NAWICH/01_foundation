@@ -65,8 +65,6 @@ def main():
     # 0: temp, 1: humidity, 2: is_day, 3: rain... (matches config order)
     temp = current.Variables(0).Value()
     humidity = current.Variables(1).Value()
-    # Note: If you want weather_code, you must add "weather_code" to your config['current'] list!
-    
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     # 7. Create Output Data
