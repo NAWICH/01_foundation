@@ -11,91 +11,118 @@ from dotenv import load_dotenv
 import os
 import requests
 
-def fetch_weather(city):
-    load_dotenv()
-    url = os.getenv('open-mateo_url')
-    if city == 'kathmandu':
-        latitude = 27.7017
-        longitude = 85.3206
-    elif city == 'pokhara':
-        latitude = 28.2669
-        longitude = 83.9685
-    elif city == 'baglung':
-        latitude = 28.2669
-        longitude = 83.6663
-    elif city == 'lalitpur':
-        latitude = 28.2669
-        longitude = 83.9685
+
+class APIClient:
+    def __init__(self):
+        """Initialize the API client."""
+        pass
     
-    params = {
-        "latitude": latitude,
-        "longitude": longitude,
-        "current": ["temperature_2m", "wind_speed_10m", "weather_code"],
-    }
-
-    try:
-        response = requests.get(url, params=params)
-        data = response.json()
-
-        return data
-    except Exception as e:
-        print(f"error is {e}")
-
-def fetch_quote():
-    load_dotenv()
-    API_KEY = os.getenv('quotes')
-
-    symbol = 'AAPL'
-    url = "https://api.api-ninjas.com/v2/randomquotes".format(symbol)
-
-    try:
-        response = requests.get(url,headers={'X-Api-Key': API_KEY})
-        quote_data = response.json()
-
-        quote = {'quote':quote_data[0]['quote'], 'author': quote_data[0]['author']}
-
-        return quote
-    except Exception as e:
-        print(f"The error is : {e}")
-
-def fetch_news():
-    try:
+    def fetch_weather(self, city):
+        """Fetch weather data for a given city."""
         load_dotenv()
-        url = os.getenv('news_api')
-        responses = requests.get(url)
-        data = responses.json()
-        if data['totalResults'] == 0:
-            return None
-        else:
+        url = os.getenv('open-mateo_url')
+        
+        city_coords = {
+            'kathmandu': (27.7017, 85.3206),
+            'pokhara': (28.2669, 83.9685),
+            'baglung': (28.2669, 83.6663),
+            'lalitpur': (28.2669, 83.9685)
+        }
+        
+        if city.lower() not in city_coords:
+            return {"error": f"City '{city}' not supported"}
+        
+        latitude, longitude = city_coords[city.lower()]
+        
+        params = {
+            "latitude": latitude,
+            "longitude": longitude,
+            "current": ["temperature_2m", "wind_speed_10m", "weather_code"],
+        }
+
+        try:
+            response = requests.get(url, params=params)
+            data = response.json()
             return data
-    except Exception as e:
-        print(e)
+        except Exception as e:
+            print(f"error is {e}")
+            return None
 
-def fetch_exchange_rates(base_currency):
-    try:
+    def fetch_quote(self):
+        """Fetch a random quote."""
         load_dotenv()
-        api_key = os.getenv('exchage_rate_api')
+        API_KEY = os.getenv('quotes')
 
-        url = f"https://v6.exchangerate-api.com/v6/{api_key}/pair/{base_currency}/USD"
+        url = "https://api.api-ninjas.com/v2/randomquotes"
 
-        reponses = requests.get(url)
-        data = reponses.json()
+        try:
+            response = requests.get(url, headers={'X-Api-Key': API_KEY})
+            quote_data = response.json()
 
-        return data
-    except Exception as e:
-        print(f"Error is {e}")
+            quote = {'quote': quote_data[0]['quote'], 'author': quote_data[0]['author']}
+            return quote
+        except Exception as e:
+            print(f"The error is : {e}")
+            return None
 
-def fetch_joke():
-    try:
-        load_dotenv()
-        url = os.getenv('joke_api')
+    def fetch_news(self, country='us'):
+        """Fetch news headlines for a given country."""
+        try:
+            load_dotenv()
+            url = os.getenv('news_api')
+            params = {'country': country}
+            responses = requests.get(url, params=params)
+            data = responses.json()
+            
+            if data.get('totalResults', 0) == 0:
+                return None
+            else:
+                # Extract top 5 headlines
+                articles = data.get('articles', [])[:5]
+                headlines = []
+                for article in articles:
+                    headlines.append({
+                        'title': article.get('title', ''),
+                        'source': article.get('source', {}).get('name', ''),
+                        'url': article.get('url', '')
+                    })
+                return headlines
+        except Exception as e:
+            print(e)
+            return None
 
-        responses = requests.get(url)
-        print(responses)
-        data = responses.json()
+    def fetch_exchange_rates(self, base_currency):
+        """Fetch exchange rates for a base currency."""
+        try:
+            load_dotenv()
+            api_key = os.getenv('exchage_rate_api')
 
-        data_dict = {"joke": data['joke']}
-        return data_dict
-    except Exception as e:
-        print(f"The error is {e}")
+            url = f"https://v6.exchangerate-api.com/v6/{api_key}/pair/{base_currency}/USD"
+
+            responses = requests.get(url)
+            data = responses.json()
+
+            return data
+        except Exception as e:
+            print(f"Error is {e}")
+            return None
+
+    def fetch_joke(self):
+        """Fetch a joke (handles single-part and two-part jokes)."""
+        try:
+            load_dotenv()
+            url = os.getenv('joke_api')
+
+            responses = requests.get(url)
+            data = responses.json()
+
+            if 'joke' in data:
+                return {'joke': data['joke']}
+            elif 'setup' in data and 'delivery' in data:
+                return {'setup': data['setup'], 'delivery': data['delivery']}
+            else:
+                return None
+        except Exception as e:
+            print(f"The error is {e}")
+            return None
 

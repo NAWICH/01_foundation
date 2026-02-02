@@ -20,7 +20,7 @@
     #write everything back to cache file
 #method: clear()
     #delete the cache file print confirmation message
-from api_clint import fetch_exchange_rates, fetch_joke, fetch_news, fetch_quote, fetch_weather
+from api_clint import APIClient
 import os
 from datetime import timedelta, datetime
 import json
@@ -50,6 +50,7 @@ class Cachemanager:
         
         #return data if it is fresh else return none
         if self.cache_duration - saved_time < timedelta(minutes=60):
+            print("data expire")
             return None
         else:
             return data
@@ -77,7 +78,4 @@ class Cachemanager:
     def clear(self):
         with open(self.cache_dir, "w") as f:
             pass
-now = datetime.now()
-duration = now + timedelta()
-d = Cachemanager("cache.json", duration)
-d.clear()
+
