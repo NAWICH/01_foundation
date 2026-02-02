@@ -1,6 +1,0 @@
-api to use:
-weather Data : open-meteo(no api)
-random quotes: quotable(no api)
-news api: News Headlines (https://newsapi.org/)
-currency exchange: ExhangeRate-API (https://www.exchangerate-api.com/)
-joke api : https://v2.jokeapi.dev/

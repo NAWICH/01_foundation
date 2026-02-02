@@ -52,7 +52,7 @@ def fetch_quote():
         response = requests.get(url,headers={'X-Api-Key': API_KEY})
         quote_data = response.json()
 
-        quote = {quote_data[0]['quote'], quote_data[0]['author']}
+        quote = {'quote':quote_data[0]['quote'], 'author': quote_data[0]['author']}
 
         return quote
     except Exception as e:
@@ -94,12 +94,8 @@ def fetch_joke():
         print(responses)
         data = responses.json()
 
-        if 'joke' in data:
-            return {data['joke']}
-        elif 'setup' in data and 'delivery' in  data:
-            return {data['setup'], data['delivery']}
-        else: 
-            return None
+        data_dict = {"joke": data['joke']}
+        return data_dict
     except Exception as e:
         print(f"The error is {e}")
 
