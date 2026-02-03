@@ -40,20 +40,25 @@ class Cachemanager:
             return None
         
         #load json data
-        with open(self.cache_dir, 'r') as f:
-            data = json.load(f)
-
-        if key not in data:
+        try:
+            with open(self.cache_dir, 'r') as f:
+                data = json.load(f)
+        except (json.JSONDecodeError, FileNotFoundError):
             return None
+
+        if data is None or key not in data:
+            return None
+        
         #change str time to datetime.datetime format
         saved_time = datetime.strptime(data[key]['timestamp'], "%Y-%m-%d %H:%M:%S.%f")
         
-        #return data if it is fresh else return none
-        if self.cache_duration - saved_time < timedelta(minutes=60):
-            print("data expire")
-            return None
+        #calculate elapsed time and check if still valid
+        elapsed = datetime.now() - saved_time
+        if elapsed < self.cache_duration:
+            return data[key]['data']  # Still valid
         else:
-            return data
+            print(f"Cache expired for {key}")
+            return None  # Expired
         
 
     def set(self, key, data):
@@ -65,9 +70,9 @@ class Cachemanager:
             json_file = {}
         
         # Update/add the key with data and current timestamp (convert datetime to string)
-        json_file.update({
-            "timestamp": self.cache_duration.strftime("%Y-%m-%d %H:%M:%S.%f"),
-            "data": data
+        json_file.update({key:{
+            "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"),
+            "data": data}
         })
 
         # Write everything back to cache file

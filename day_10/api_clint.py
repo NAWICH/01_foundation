@@ -65,7 +65,7 @@ class APIClient:
             print(f"The error is : {e}")
             return None
 
-    def fetch_news(self, country='us'):
+    def fetch_news(self, country='US'):
         """Fetch news headlines for a given country."""
         try:
             load_dotenv()
