@@ -33,7 +33,7 @@ class Cachemanager:
         #if cache.json doesn't exsits create a new file
         if not os.path.exists(self.cache_dir):
             with open(self.cache_dir, "w") as f:
-                pass
+                json.dump({}, f)
     
     def get(self, key):
         if not os.path.exists(self.cache_dir):
@@ -82,5 +82,6 @@ class Cachemanager:
 
     def clear(self):
         with open(self.cache_dir, "w") as f:
-            pass
+            json.dump({}, f)
+        print("🗑️ Cache cleared!")
 

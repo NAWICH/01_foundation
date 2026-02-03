@@ -6,7 +6,6 @@
 #add fetch_exchange_rates(base_currency) 
 #add fetch_joke() should handle both single-part and two-part joke
 
-import pandas as pd
 from dotenv import load_dotenv
 import os
 import requests
@@ -15,11 +14,10 @@ import requests
 class APIClient:
     def __init__(self):
         """Initialize the API client."""
-        pass
+        load_dotenv()
     
     def fetch_weather(self, city):
         """Fetch weather data for a given city."""
-        load_dotenv()
         url = os.getenv('open-mateo_url')
         
         city_coords = {
@@ -50,7 +48,6 @@ class APIClient:
 
     def fetch_quote(self):
         """Fetch a random quote."""
-        load_dotenv()
         API_KEY = os.getenv('quotes')
 
         url = "https://api.api-ninjas.com/v2/randomquotes"
@@ -68,7 +65,6 @@ class APIClient:
     def fetch_news(self, country='US'):
         """Fetch news headlines for a given country."""
         try:
-            load_dotenv()
             url = os.getenv('news_api')
             params = {'country': country}
             responses = requests.get(url, params=params)
@@ -94,10 +90,9 @@ class APIClient:
     def fetch_exchange_rates(self, base_currency):
         """Fetch exchange rates for a base currency."""
         try:
-            load_dotenv()
             api_key = os.getenv('exchage_rate_api')
 
-            url = f"https://v6.exchangerate-api.com/v6/{api_key}/pair/{base_currency}/USD"
+            url = f"https://v6.exchangerate-api.com/v6/{api_key}/latest/{base_currency}"
 
             responses = requests.get(url)
             data = responses.json()
@@ -110,7 +105,6 @@ class APIClient:
     def fetch_joke(self):
         """Fetch a joke (handles single-part and two-part jokes)."""
         try:
-            load_dotenv()
             url = os.getenv('joke_api')
 
             responses = requests.get(url)

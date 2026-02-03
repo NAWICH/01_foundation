@@ -31,14 +31,13 @@
 
 from api_clint import APIClient
 from cache import Cachemanager
-import argparse
 import json
 from datetime import datetime, timedelta
 import os
 
 
 
-def fetchall_data(location, api_client, cache):
+def fetch_all_data(location, api_client, cache):
     timestamp = datetime.now()
     result_dir = {
         "timestamp": timestamp.strftime("%Y-%m-%d %H:%M:%S.%f"),
@@ -166,5 +165,53 @@ def display_data(data,location):
         else:
             print("No joke found in this format.")
 
-result = fetchall_data("kathmandu", APIClient(), Cachemanager("cache.json", timedelta(minutes=60)))
-display_data(result, 'kathmandu')
+
+def save_snapshot(data):
+    '''ARG
+        data: the dicctionary from fetch_alldata() '''
+    today_date = datetime.today().strftime('%Y-%m-%d')
+    file_name = today_date + ".json"
+    full_path = os.path.join("data/",file_name)
+
+    if os.path.isdir(f"data/"):
+        try:
+            with open(full_path, "w") as f:
+                json.dump(data, f, indent=2)
+            print(f"💾 Snapshot saved: {full_path}")
+        except Exception as e:
+            print(f"Error in making file : {e}")
+    else:
+        try:
+            os.makedirs("data")
+            with open(full_path, "w") as f:
+                json.dump(data, f, indent=2)
+            print(f"💾 Snapshot saved: {full_path}")
+        except Exception as e:
+            print(f"Error in making file : {e}")
+    
+def get_location():
+    location = input("Enter location (kathmandu, pokhara, baglung, lalitpur): ").lower()
+    default_location = ('kathmandu', 'pokhara', 'baglung', 'lalitpur')
+    if location not in default_location:
+        print("invalid location")
+        return get_location()
+    else:
+        return location
+
+
+def main():
+    location = get_location()
+    print("Starting API Dashboard...")
+    print()
+
+    api_client = APIClient()
+    cache = Cachemanager("cache.json", timedelta(minutes=60))
+    
+    data = fetch_all_data(location, api_client, cache)
+    display_data(data, location)
+    save_snapshot(data)
+    
+    print("Done! ✨")
+
+if __name__ == "__main__":
+    main()
