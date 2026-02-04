@@ -41,6 +41,13 @@ def get_next_id(tasks):
 @app.route('/api/tasks', methods = ['GET'])
 def get_all_tasks():
     tasks = load_tasks()
+
+    status = request.args.get('status')
+    priority = request.args.get('priority')
+    if status:
+        tasks = [t for t in tasks if t['status'].lower() == status.lower()]
+    if priority:
+        tasks = [task for task in tasks if task['priority'] == priority]
     return jsonify(tasks), 200
 
 
@@ -82,13 +89,13 @@ def update_task(id):
             updates = {k: v for k, v in data.items() if v is not None}
 
             task.update(updates)
-            task["updated_at"] == datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            task["updated_at"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             save_tasks(tasks)
-            return {"message": "Update successful", "task": jsonify(task)}, 200
+            return {"message": "Update successful", "task": task}, 200
         
-        return {"message": "No changes detacted", "task": jsonify(task)}, 200
+        return {"message": "No changes detacted", "task": task}, 200
     
-    return {"error": "Task not found"}, 400
+    return {"error": "Task not found"}, 404
 
 @app.route("/api/tasks/<int:id>", methods = ["DELETE"])
 def delete_task(id):
@@ -101,6 +108,7 @@ def delete_task(id):
             return {"message": "Task deleted sucessfully"}, 200
     
     return {"message": "Task not found"}, 404
-    
+
+
 if __name__ == "__main__":
     app.run(debug=True)
