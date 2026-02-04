@@ -69,7 +69,7 @@ def get_single_task(id):
     tasks_list = load_tasks()
     for task in tasks_list:
         if task['id'] == id:
-            return task, 200
+            return jsonify(task), 200
     return "Id is not found", 404
 
 @app.route("/api/tasks/<int:id>", methods = ["PUT"])
@@ -84,11 +84,23 @@ def update_task(id):
             task.update(updates)
             task["updated_at"] == datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             save_tasks(tasks)
-            return {"message": "Update successful", "task": task}, 200
+            return {"message": "Update successful", "task": jsonify(task)}, 200
         
-        return {"message": "No changes dedacted", "task": task}, 200
+        return {"message": "No changes detacted", "task": jsonify(task)}, 200
     
     return {"error": "Task not found"}, 400
 
+@app.route("/api/tasks/<int:id>", methods = ["DELETE"])
+def delete_task(id):
+    tasks = load_tasks()
+
+    for task in tasks:
+        if task['id'] == id:
+            tasks.remove(task)
+            save_tasks(tasks)
+            return {"message": "Task deleted sucessfully"}, 200
+    
+    return {"message": "Task not found"}, 404
+    
 if __name__ == "__main__":
     app.run(debug=True)
