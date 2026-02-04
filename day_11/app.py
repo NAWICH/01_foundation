@@ -35,7 +35,7 @@ def get_next_id(tasks):
     if not tasks:
         return 1
     max_id = max(task['id'] for task in tasks)
-    return max_id
+    return max_id + 1
 
 
 
@@ -44,5 +44,25 @@ def get_all_tasks():
     tasks = load_tasks()
     return jsonify(tasks), 200
 
+
+@app.route('/api/tasks', methods = ['POST'])
+def create_new_tasks():
+    data = request.get_json()
+
+    task = {
+        "id": get_next_id(load_tasks()),
+        "title":data.get("title"),
+        "description": data.get("description"),
+        "status": "pending",
+        "priority": data.get("priority"),
+        "created_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "updated_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    }
+
+    tasks_list = load_tasks()
+    tasks_list.append(task)
+    save_tasks(tasks_list)
+
+    return jsonify(tasks_list), 201
 if __name__ == "__main__":
     app.run(debug=True)
