@@ -38,7 +38,6 @@ def get_next_id(tasks):
     return max_id + 1
 
 
-
 @app.route('/api/tasks', methods = ['GET'])
 def get_all_tasks():
     tasks = load_tasks()
@@ -64,5 +63,14 @@ def create_new_tasks():
     save_tasks(tasks_list)
 
     return jsonify(tasks_list), 201
+
+@app.route("/api/tasks/<int:id>", methods = ['GET'])
+def get_single_task(id):
+    tasks_list = load_tasks()
+    for task in tasks_list:
+        if task['id'] == id:
+            return task
+    return "Id is not found"
+
 if __name__ == "__main__":
     app.run(debug=True)
