@@ -1,0 +1,9 @@
+{
+  "id": 4,
+  "title": "Setup PostgreSQL",
+  "description": "Install and configure PostgreSQL database",
+  "status": "in-progress",
+  "priority": "medium",
+  "created_at": "2026-02-03T11:30:00",
+  "updated_at": "2026-02-04T14:20:00"
+}

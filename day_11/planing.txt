@@ -1,0 +1,29 @@
+Project name: Task Manager REST API
+A complete REST API backend for managing tasks(like a todo list API)
+
+core feature:
+GET/api/tasks -> Get all tasks
+GET/api/tasks/<id> -> Get one specific task
+POST/apitasks -> Create a new task
+PUT/api/tasks/<id> -> Update a task
+DELETE/api/tasks/<id> -> Delete a task
+
+json structure
+{
+  "id": 1,
+  "title": "Learn Flask",
+  "description": "Build a REST API with Flask",
+  "status": "in-progress",
+  "priority": "high",
+  "created_at": "2026-02-04T14:30:00",
+  "updated_at": "2026-02-04T14:30:00"
+}
+
+**Fields:**
+- `id` - unique number (auto-increment)
+- `title` - string (required)
+- `description` - string (optional)
+- `status` - "pending", "in-progress", "completed"
+- `priority` - "low", "medium", "high"
+- `created_at` - timestamp
+- `updated_at` - timestamp
