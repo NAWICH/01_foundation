@@ -69,8 +69,26 @@ def get_single_task(id):
     tasks_list = load_tasks()
     for task in tasks_list:
         if task['id'] == id:
-            return task
-    return "Id is not found"
+            return task, 200
+    return "Id is not found", 404
+
+@app.route("/api/tasks/<int:id>", methods = ["PUT"])
+def update_task(id):
+    data = request.get_json()
+    tasks = load_tasks()
+
+    for task in tasks:
+        if task['id'] == id:
+            updates = {k: v for k, v in data.items() if v is not None}
+
+            task.update(updates)
+            task["updated_at"] == datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            save_tasks(tasks)
+            return {"message": "Update successful", "task": task}, 200
+        
+        return {"message": "No changes dedacted", "task": task}, 200
+    
+    return {"error": "Task not found"}, 400
 
 if __name__ == "__main__":
     app.run(debug=True)
