@@ -13,7 +13,7 @@ app = Flask(__name__)
 
 def load_tasks():
     '''Read tasks from JSON file'''
-    try:
+    try:    
         with open("tasks.json", 'r') as f:
             return json.load(f)
     except FileNotFoundError:
@@ -54,7 +54,8 @@ def get_all_tasks():
 @app.route('/api/tasks', methods = ['POST'])
 def create_new_tasks():
     data = request.get_json()
-
+    if not data or not data.get('title'):
+        return jsonify({"error": "Title is required"}), 400
     task = {
         "id": get_next_id(load_tasks()),
         "title":data.get("title"),
@@ -69,7 +70,7 @@ def create_new_tasks():
     tasks_list.append(task)
     save_tasks(tasks_list)
 
-    return jsonify(tasks_list), 201
+    return jsonify(task), 201
 
 @app.route("/api/tasks/<int:id>", methods = ['GET'])
 def get_single_task(id):
@@ -86,16 +87,20 @@ def update_task(id):
 
     for task in tasks:
         if task['id'] == id:
-            updates = {k: v for k, v in data.items() if v is not None}
-
-            task.update(updates)
+            if 'title' in data:
+                task['title'] = data['title']
+            if 'description' in data:
+                task['description'] = data['description']
+            if 'status' in data:
+                task['status'] = data['status']
+            if 'priority' in data:
+                task['priority'] = data['priority']
+            
             task["updated_at"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             save_tasks(tasks)
-            return {"message": "Update successful", "task": task}, 200
-        
-        return {"message": "No changes detacted", "task": task}, 200
+            return jsonify(task), 200
     
-    return {"error": "Task not found"}, 404
+    return jsonify({"error": "Task not found"}), 404
 
 @app.route("/api/tasks/<int:id>", methods = ["DELETE"])
 def delete_task(id):
@@ -109,6 +114,20 @@ def delete_task(id):
     
     return {"message": "Task not found"}, 404
 
-
+@app.route("/api/tasks/stats", methods = ['GET'])
+def statistics():
+    tasks = load_tasks()
+    stat = {
+        "total": len(tasks),
+        "pending": sum(1 for task in tasks if task['status'] == 'pending'),
+        "in_progress": sum(1 for task in tasks if task['status'] == 'in-progress'),
+        "completed": sum(1 for task in tasks if task['status'] == 'completed'),
+        "by_priority": {
+            "low": sum(1 for task in tasks if task['priority'] == 'low'),
+            "medium" : sum(1 for task in tasks if task['priority'] == 'medium'),
+            "high" : sum(1 for task in tasks if task['priority'] == 'high')
+        }
+    }
+    return jsonify(stat), 200
 if __name__ == "__main__":
     app.run(debug=True)
