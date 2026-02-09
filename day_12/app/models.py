@@ -39,8 +39,8 @@ class TokenData(BaseModel):
 
 class PostCreate(BaseModel):
     """Data extracted from token"""
-    title: str = Field(..., min_length=1, max_length=200)
-    content: str = Field(..., min_length=1)
+    title: str = Field(..., min_length=10, max_length=200)
+    content: str = Field(..., min_length=10)
 
 class PostUpdate(BaseModel):
     """Data for updating a post"""

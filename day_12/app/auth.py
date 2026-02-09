@@ -5,7 +5,7 @@
 #verify token
 #get current user from token
 import os
-from passlib.context import CryptContext
+import bcrypt
 from jose import jwt, JWTError
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
@@ -15,17 +15,22 @@ JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
 TOKEN_EXPIRY_MINUTES = int(os.getenv("TOKEN_EXPIRY_MINUTES", "60"))
 JWT_ALGORITHM = os.getenv("JWT_ALGORITHM")
 
-password_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
 
 def get_hashed_password(password: str) -> str:
     """Hash a password"""
-    return password_context.hash(password)
+    password_bytes = password.encode('utf-8')
+    salt = bcrypt.gensalt()
+    hashed = bcrypt.hashpw(password_bytes, salt)
+    
+    return hashed.decode('utf-8')
 
-def verify_password(password: str, hashed_pass: str) -> bool:
+def verify_password(password: str, hashed_password: str) -> bool:
     """Verify password against hash"""
-    return password_context.verify(password, hashed_pass)
+    password_bytes = password.encode('utf-8')
+    hashed_bytes = hashed_password.encode('utf-8')
 
+    return bcrypt.checkpw(password_bytes, hashed_bytes)
+    
 def create_access_token(subject: str, expires_delta: timedelta=None):
     """Create JWT access token"""
     if expires_delta:
